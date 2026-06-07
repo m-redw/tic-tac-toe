@@ -35,5 +35,9 @@ const gameboard = (function() {
         return niceBoard;
     };
 
-    return {printBoard};
+    const fillCell = (x, y, marker) => {
+        board[x-1][y-1].markCell(marker);
+    };
+
+    return {printBoard, fillCell};
 })();

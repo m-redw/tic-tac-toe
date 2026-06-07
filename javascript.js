@@ -97,6 +97,7 @@ const gameManager = (function() {
 
     const switchTurn = () => {
         whosTurn = (whosTurn === player1) ? player2 : player1;
+        displayManager.displayTurn();
     }
 
     const playRound = (x, y) => {
@@ -180,6 +181,20 @@ const displayManager = (function() {
         }
     };
 
+    const displayTurn = () => {
+        const turnTracker = document.querySelector('.turn-tracker');
+        turnTracker.textContent = `Turn: ${gameManager.getWhosTurns()}`;
+        
+        if (gameManager.getWhosTurns() === gameManager.getPlayerNames()[0]) {
+            turnTracker.classList.remove('player2');
+            turnTracker.classList.add('player1');
+        } else {
+            turnTracker.classList.remove('player1');
+            turnTracker.classList.add('player2');
+        }
+        console.log(turnTracker.classList)
+    }
+
     const displayWinner = (winner) => {
         const body = document.querySelector('body');
         const winnerText = document.createElement('h2');
@@ -207,8 +222,9 @@ const displayManager = (function() {
         body.appendChild(rematchButton);
     };
 
-    return {initButtons, displayWinner}
+    return {initButtons, displayTurn, displayWinner}
 })();
 
 gameboard.initBoard();
+displayManager.displayTurn();
 displayManager.initButtons();

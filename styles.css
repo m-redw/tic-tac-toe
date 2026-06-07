@@ -6,6 +6,19 @@ body {
     align-items: center;
 }
 
+.turn-tracker {
+    font-size: 24px;
+    color: black;
+}
+
+.turn-tracker.player1 {
+    color: #65a800;
+}
+
+.turn-tracker.player2 {
+    color: #9b0000;
+}
+
 .rows {
     display: flex;
     gap: 15px;

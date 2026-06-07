@@ -20,6 +20,7 @@ const cell = function() {
     return {getValue, markCell};
 };
 
+// There should only be 1 gameboard, so use IIFE
 const gameboard = (function() {
     const board = [];
     initBoard(board);
@@ -35,9 +36,38 @@ const gameboard = (function() {
         return niceBoard;
     };
 
+    const getCell = (x, y) => gameboard[x-1][y-1];
+
     const fillCell = (x, y, marker) => {
-        board[x-1][y-1].markCell(marker);
+        const cell = board[x-1][y-1];
+        if (cell.getValue() != 'empty') {
+            alert('Cell already full! Choose another.')
+            return false;
+        }
+        cell.markCell(marker);
+        return true;
     };
 
-    return {printBoard, fillCell};
+    return {printBoard, getCell, fillCell};
+})();
+
+const gameManager = (function() {
+    const player1 = prompt('Enter Player 1 name:');
+    const player2 = prompt('Enter Player 2 name:');
+    let whosTurn = player1;
+
+    const getPlayerNames = () => `${player1} vs ${player2}`;
+    const getWhosTurns = () => whosTurn;
+
+    const playRound = (x, y) => {
+        if (whosTurn === player1) {
+            const filled = gameboard.fillCell(x, y, 'x');
+            if (filled) whosTurn = player2;
+        } else {
+            const filled = gameboard.fillCell(x, y, 'o');
+            if (filled) whosTurn = player1;
+        }
+    };
+
+    return {getPlayerNames, getWhosTurns, playRound};
 })();

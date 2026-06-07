@@ -52,8 +52,8 @@ const gameboard = (function() {
 })();
 
 const gameManager = (function() {
-    const player1 = prompt('Enter Player 1 name:');
-    const player2 = prompt('Enter Player 2 name:');
+    const player1 = prompt('Enter Player 1 name:', 'Player 1');
+    const player2 = prompt('Enter Player 2 name:', 'Player 2');
     let whosTurn = player1;
     let canPlay = true;
 
@@ -65,7 +65,7 @@ const gameManager = (function() {
         for (let i = 1; i < 4; i++) {
             if (gameboard.getCell(i,1) === marker && gameboard.getCell(i, 1) === gameboard.getCell(i,2) && gameboard.getCell(i,2) === gameboard.getCell(i,3)) {
                 return marker;
-            } else if (gameboard.getCell(1,i) === marker && gameboard.getCell(1, i) === gameboard.getCell(2,i) && gameboard.getCell(3,i) === gameboard.getCell(i,3)) {
+            } else if (gameboard.getCell(1,i) === marker && gameboard.getCell(1, i) === gameboard.getCell(2,i) && gameboard.getCell(2,i) === gameboard.getCell(3,i)) {
                 return marker;
             }
         }
@@ -104,8 +104,45 @@ const gameManager = (function() {
     };
 
     const endGame = (player) => {
-        console.log(`Congrulations ${player}! You won!`);
+        displayManager.displayWinner(player);
     };
 
-    return {getPlayerNames, getWhosTurns, playRound};
+    const getPlayStatus = () => canPlay;
+
+    return {getPlayerNames, getWhosTurns, playRound, getPlayStatus};
 })();
+
+const displayManager = (function() {
+    const rows = document.querySelectorAll('.rows');
+    
+    const initButtons = () => {
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                const cell = document.createElement('button');
+                cell.textContent = gameboard.getCell(i+1, j+1);
+
+                cell.type = 'button';
+                cell.addEventListener('click', ()=>{
+                    if (gameManager.getPlayStatus() === true) {
+                        cell.disabled = true;
+                        gameManager.playRound(i+1, j+1);
+                        cell.textContent = gameboard.getCell(i+1, j+1);
+                    }
+                });
+                
+                rows[i].appendChild(cell);
+            }
+        }
+    };
+
+    const displayWinner = (winner) => {
+        const body = document.querySelector('body');
+        const winnerText = document.createElement('h2');
+        winnerText.textContent = `Congradulations ${winner}! You won!`;
+        body.appendChild(winnerText);
+    };
+
+    return {initButtons, displayWinner}
+})();
+
+displayManager.initButtons();

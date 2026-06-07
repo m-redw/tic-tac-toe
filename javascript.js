@@ -80,30 +80,25 @@ const gameManager = (function() {
         return 'no winner';
     };
 
+    const switchTurn = () => {
+        whosTurn = (whosTurn === player1) ? player2 : player1;
+    }
+
     const playRound = (x, y) => {
         if (canPlay) {
-            if (whosTurn === player1) {
-                const filled = gameboard.fillCell(x, y, 'x');
-                if (filled) {
-                    const winner = checkWinner('x');
-                    if (winner === 'x') {
-                        canPlay = false;
-                        endGame(player1);
-                    } else {
-                        whosTurn = player2;
-                    }
-                }
-            } else {
-                const filled = gameboard.fillCell(x, y, 'o');
-                if (filled) {
-                    const winner = checkWinner('o');
-                    if (winner === 'o') {
-                        canPlay = false;
-                        endGame(player2);
-                    } else {
-                        whosTurn = player1;
-                    }
-                }
+            const marker = (whosTurn === player1) ? 'x' : 'o';
+
+            const filled = gameboard.fillCell(x, y, marker);
+            if (filled) {
+                const winner = checkWinner(marker);
+                if (winner === 'x') {
+                    canPlay = false;
+                    endGame(player1);
+                } else if (winner === 'o') {
+                    canPlay = false;
+                    endGame(player2);
+                } 
+                switchTurn();
             }
         }
     };

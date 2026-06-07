@@ -10,7 +10,7 @@ function initBoard(board) {
 }
 
 const cell = function() {
-    let value = 'empty';
+    let value = '';
 
     const getValue = () => value;
     const markCell = (marker) => {
@@ -40,7 +40,7 @@ const gameboard = (function() {
 
     const fillCell = (x, y, marker) => {
         const cell = board[x-1][y-1];
-        if (cell.getValue() != 'empty') {
+        if (cell.getValue() != '') {
             alert('Cell already full! Choose another.')
             return false;
         }
@@ -57,7 +57,7 @@ const gameManager = (function() {
     let whosTurn = player1;
     let canPlay = true;
 
-    const getPlayerNames = () => `${player1} vs ${player2}`;
+    const getPlayerNames = () => [player1, player2];
     const getWhosTurns = () => whosTurn;
 
     const checkWinner = (marker) => {
@@ -115,16 +115,27 @@ const gameManager = (function() {
 const displayManager = (function() {
     const rows = document.querySelectorAll('.rows');
     
+    const addPlayerClass = (cell) => {
+        if (gameManager.getWhosTurns() === gameManager.getPlayerNames()[0]) {
+            cell.classList.add('player1');
+        } else {
+            console.log(gameManager.getPlayerNames()[0])
+            cell.classList.add('player2');
+        }
+    };
+
     const initButtons = () => {
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 3; j++) {
                 const cell = document.createElement('button');
                 cell.textContent = gameboard.getCell(i+1, j+1);
+                cell.classList.add('cell');
 
                 cell.type = 'button';
                 cell.addEventListener('click', ()=>{
                     if (gameManager.getPlayStatus() === true) {
                         cell.disabled = true;
+                        addPlayerClass(cell);
                         gameManager.playRound(i+1, j+1);
                         cell.textContent = gameboard.getCell(i+1, j+1);
                     }
@@ -138,7 +149,8 @@ const displayManager = (function() {
     const displayWinner = (winner) => {
         const body = document.querySelector('body');
         const winnerText = document.createElement('h2');
-        winnerText.textContent = `Congradulations ${winner}! You won!`;
+        winnerText.textContent = `Congratulations ${winner}! You won!`;
+        addPlayerClass(winnerText);
         body.appendChild(winnerText);
     };
 

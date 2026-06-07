@@ -1,4 +1,40 @@
+body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 .rows {
     display: flex;
     gap: 15px;
+    margin: 0 0 15px 0;
+}
+
+.cell {
+    width: 100px;
+    height: 100px;
+    font-size: 16px;
+    color: black;
+}
+
+.cell.player1 {
+    font-size: 32px;
+    background-color: greenyellow;
+}
+
+.cell.player2 {
+    font-size: 32px;
+    background-color: red;
+}
+
+h2.player1 {
+    font-size: 32px;
+    color: #65a800;
+}
+
+h2.player2 {
+    font-size: 32px;
+    color: #9b0000;
 }

@@ -23,7 +23,17 @@ const cell = function() {
 // There should only be 1 gameboard, so use IIFE
 const gameboard = (function() {
     const board = [];
-    initBoard(board);
+
+    const initBoard = () => {
+        // Make 2D array for board (3x3)
+        // all cells init to empty
+        for (let i = 0; i < 3; i++) {
+            board[i] = [];
+            for (let j = 0; j < 3; j++) {
+                board[i].push(cell());
+            }
+        }
+    };
     
     const printBoard = () => {
         const niceBoard = [];
@@ -48,7 +58,7 @@ const gameboard = (function() {
         return true;
     };
 
-    return {printBoard, getCell, fillCell};
+    return {initBoard, printBoard, getCell, fillCell};
 })();
 
 const gameManager = (function() {
@@ -108,8 +118,9 @@ const gameManager = (function() {
     };
 
     const getPlayStatus = () => canPlay;
+    const makePlayable = () => {canPlay = true};
 
-    return {getPlayerNames, getWhosTurns, playRound, getPlayStatus};
+    return {getPlayerNames, getWhosTurns, playRound, getPlayStatus, makePlayable};
 })();
 
 const displayManager = (function() {
@@ -119,7 +130,6 @@ const displayManager = (function() {
         if (gameManager.getWhosTurns() === gameManager.getPlayerNames()[0]) {
             cell.classList.add('player1');
         } else {
-            console.log(gameManager.getPlayerNames()[0])
             cell.classList.add('player2');
         }
     };
@@ -146,15 +156,42 @@ const displayManager = (function() {
         }
     };
 
+    const removeButtons = () => {
+        while (rows[0].firstChild) {
+            rows[0].firstChild.remove();
+        }
+        while (rows[1].firstChild) {
+            rows[1].firstChild.remove();
+        }
+        while (rows[2].firstChild) {
+            rows[2].firstChild.remove();
+        }
+    };
+
     const displayWinner = (winner) => {
         const body = document.querySelector('body');
         const winnerText = document.createElement('h2');
         winnerText.textContent = `Congratulations ${winner}! You won!`;
         addPlayerClass(winnerText);
+
+        const rematchButton = document.createElement('button');
+        rematchButton.textContent = 'Rematch!';
+        rematchButton.classList.add('rematch-button');
+        rematchButton.addEventListener('click', ()=>{
+            gameboard.initBoard();
+            gameManager.makePlayable();
+            removeButtons();
+            initButtons();
+            winnerText.remove();
+            rematchButton.remove();
+        });
+
         body.appendChild(winnerText);
+        body.appendChild(rematchButton);
     };
 
     return {initButtons, displayWinner}
 })();
 
+gameboard.initBoard();
 displayManager.initButtons();

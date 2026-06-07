@@ -66,6 +66,7 @@ const gameManager = (function() {
     const player2 = prompt('Enter Player 2 name:', 'Player 2');
     let whosTurn = player1;
     let canPlay = true;
+    let turnCounter = 0;
 
     const getPlayerNames = () => [player1, player2];
     const getWhosTurns = () => whosTurn;
@@ -87,6 +88,10 @@ const gameManager = (function() {
             return marker;
         }
 
+        if (turnCounter === 9) {
+            return 'tie';
+        }
+
         return 'no winner';
     };
 
@@ -96,6 +101,7 @@ const gameManager = (function() {
 
     const playRound = (x, y) => {
         if (canPlay) {
+            turnCounter++;
             const marker = (whosTurn === player1) ? 'x' : 'o';
 
             const filled = gameboard.fillCell(x, y, marker);
@@ -107,7 +113,10 @@ const gameManager = (function() {
                 } else if (winner === 'o') {
                     canPlay = false;
                     endGame(player2);
-                } 
+                } else if (winner === 'tie') {
+                    canPlay = false;
+                    endGame('neither');
+                }
                 switchTurn();
             }
         }
@@ -118,7 +127,10 @@ const gameManager = (function() {
     };
 
     const getPlayStatus = () => canPlay;
-    const makePlayable = () => {canPlay = true};
+    const makePlayable = () => {
+        canPlay = true;
+        turnCounter = 0;
+    };
 
     return {getPlayerNames, getWhosTurns, playRound, getPlayStatus, makePlayable};
 })();
@@ -171,8 +183,13 @@ const displayManager = (function() {
     const displayWinner = (winner) => {
         const body = document.querySelector('body');
         const winnerText = document.createElement('h2');
-        winnerText.textContent = `Congratulations ${winner}! You won!`;
-        addPlayerClass(winnerText);
+        if (winner != 'neither') {
+            winnerText.textContent = `Congratulations ${winner}! You won!`;
+            addPlayerClass(winnerText);
+        } else {
+            winnerText.textContent = 'Tie! Lock in!';
+            winnerText.classList.add('tie');
+        }
 
         const rematchButton = document.createElement('button');
         rematchButton.textContent = 'Rematch!';
